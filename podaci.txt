@@ -1,0 +1,211 @@
+const express = require('express');
+const bodyParser = require('body-parser');
+
+const app = express();
+app.use(bodyParser.json());
+
+const users = [];
+
+// Combine arrays and keep unique values
+function combineUnique(arr1, arr2) {
+  const combined = arr1.concat(arr2);
+  const uniqueSet = new Set(combined.map(JSON.stringify));
+  const uniqueArray = Array.from(uniqueSet).map(JSON.parse);
+  return uniqueArray;
+}
+
+// GET /users endpoint
+app.get('/users', (req, res) => {
+  const { query, email, phoneNumber } = req.query;
+  
+  let filteredUsers = users;
+  
+  if (query) {
+    filteredUsers = filteredUsers.filter(user => 
+      user.firstName.includes(query) ||
+      user.lastName.includes(query)
+    );
+  }
+  
+  if (email) {
+    filteredUsers = filteredUsers.filter(user => user.email === email);
+  }
+  
+  if (phoneNumber) {
+    filteredUsers = filteredUsers.filter(user => user.phoneNumber === phoneNumber);
+  }
+  
+  res.json(filteredUsers);
+});
+
+// GET /users/{id} endpoint
+app.get('/users/:id', (req, res) => {
+  const userId = req.params.id;
+  const user = users.find(user => user._id === userId);
+  if (user) {
+    res.json(user);
+  } else {
+    res.status(404).json({ message: 'User not found' });
+  }
+});
+
+// POST /users endpoint
+app.post('/users', (req, res) => {
+  const newUser = req.body;
+  users.push(newUser);
+  res.json(newUser);
+});
+
+// PUT /users/{id} endpoint
+app.put('/users/:id', (req, res) => {
+  const userId = req.params.id;
+  const updatedUser = req.body;
+  
+  const index = users.findIndex(user => user._id === userId);
+  if (index !== -1) {
+    users[index] = { ...users[index], ...updatedUser };
+    res.json(users[index]);
+  } else {
+    res.status(404).json({ message: 'User not found' });
+  }
+});
+
+// DELETE /users/{id} endpoint
+app.delete('/users/:id', (req, res) => {
+  const userId = req.params.id;
+  const index = users.findIndex(user => user._id === userId);
+  if (index !== -1) {
+    users.splice(index, 1);
+    res.json({ success: true });
+  } else {
+    res.status(404).json({ success: false, message: 'User not found' });
+  }
+});
+
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
+});
+
+
+/*
+function combiningArrays(array1,array2) {
+
+    const combinedArrays = array1.concat(array2);
+}
+
+
+const userPhoneNUmberData = 
+[
+    {
+        email: "marina@kahvana.com",
+        "phoneNumbers":[
+            {
+                type: "primary",
+                value: "202-555-0105",
+            }
+        ]
+
+    },
+    {
+        email: "kip@kahvana.com",
+        "phoneNumbers":[
+            {
+                type: "primary",
+                value: "202-555-0105",
+            }
+        ]
+
+    },
+    {
+        email: "lorie@kahvana.com",
+        "phoneNumbers":[
+            {
+                type: "primary",
+                value: "202-555-0162",
+            }
+        ]
+
+    },
+    {
+        email: "jasmin@kahvana.com",
+        "phoneNumbers":[
+            {
+                type: "primary",
+                value: "202-555-0168",
+            }
+        ]
+
+    },
+    {
+        email: "emma@kahvana.com",
+        "phoneNumbers":[
+            {
+                type: "primary",
+                value: "202-555-0187",
+            }
+        ]
+
+    },
+    {
+        email: "elvia@kahvana.com",
+        "phoneNumbers":[
+            {
+                type: "primary",
+                value: "202-555-0168",
+            }
+        ]
+
+    },
+    {
+        email: "liliana@kahvana.com",
+        "phoneNumbers":[
+            {
+                type: "primary",
+                value: "202-555-0161",
+            }
+        ]
+
+    },
+    {
+        email: "florencio@kahvana.com",
+        "phoneNumbers":[
+            {
+                type: "primary",
+                value: "202-555-0127",
+            }
+        ]
+
+    },
+    {
+        email: "delores@kahvana.com",
+        "phoneNumbers":[
+            {
+                type: "primary",
+                value: "202-555-0143",
+            }
+        ]
+
+    },
+    
+]
+
+
+const userEmailsData = [
+    {
+        "email": "delores@kahvana.com",
+        "firstName": "Delores",
+        "lastName": "Mind"
+    },
+    {
+        "email": "lorie@kahvana.com",
+        "firstName": "Lorie",
+        "lastName": "Enak"
+    },
+    {
+        "email": "emma@kahvana.com",
+        "firstName": "Emma",
+        "lastName": "Fisk"
+    }
+]
+
+*/ 
