@@ -1,4 +1,3 @@
-// script.js
 
 const searchBar = document.getElementById('searchInput');
 const searchButton = document.getElementById('searchButton');
@@ -44,7 +43,7 @@ searchButton.addEventListener('click', () => {
 });
 
 function displayUsers(usersArray) {
-  userList.innerHTML = ''; 
+  userList.innerHTML = ''; // Clear previous results
 
   usersArray.forEach(user => {
     const listItem = document.createElement('li');
